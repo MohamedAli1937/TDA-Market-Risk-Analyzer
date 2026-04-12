@@ -1,4 +1,4 @@
-# TDA Market Risk Analyzer
+# 💲 TDA Market Risk Analyzer
 
 **Topological Data Analysis for Financial Crash Prediction**
 
@@ -19,32 +19,29 @@ Traditional risk indicators (RSI, Bollinger Bands, VaR) rely on **statistical as
 ## How It Works — The TDA Pipeline
 ![TDA Market Risk Pipeline](static/images/pipeline-diagram.png)
 
-### Stage 1: Takens Time-Delay Embedding
+### 1️⃣ Stage 1: Takens Time-Delay Embedding
 
 Converts a flat 1D price series into a multi-dimensional **point cloud** using [Takens' Embedding Theorem](https://en.wikipedia.org/wiki/Takens%27s_theorem):
 
-```
-Given: x₁, x₂, ..., xₙ (closing prices)
-Embed: vᵢ = (xᵢ, xᵢ₊τ, xᵢ₊₂τ, ..., xᵢ₊₍ₐ₋₁₎τ)
-```
+Given: $x_1, x_2, \dots, x_n$ (closing prices)  
+Embed:
+$$v_i = (x_i, x_{i+\tau}, x_{i+2\tau}, \dots, x_{i+(d-1)\tau})$$
 
-- **Dimension (d)**: Number of coordinates per embedded vector (default: 3)
-- **Time Delay (τ)**: Spacing between observations (default: 1)
+- **Dimension ($d$)**: Number of coordinates per embedded vector (default: 3)
+- **Time Delay ($\tau$)**: Spacing between observations (default: 1)
 
-### Stage 2: Vietoris-Rips Persistent Homology
+### 2️⃣ Stage 2: Vietoris-Rips Persistent Homology
 
 Constructs a [Vietoris-Rips filtration](https://en.wikipedia.org/wiki/Vietoris%E2%80%93Rips_complex) on the point cloud and tracks the birth and death of topological features:
 
-- **H₀ (Connected Components)**: Clusters in the data
-- **H₁ (Loops / 1-Cycles)**: Circular structures that form and collapse
+- **$H_0$ (Connected Components)**: Clusters in the data
+- **$H_1$ (Loops / 1-Cycles)**: Circular structures that form and collapse
 
-### Stage 3: Risk Index Computation
+### 3️⃣ Stage 3: Risk Index Computation
 
-The **Risk Index** is computed as the **L₁-norm** (total persistence) of all H₁ features:
+The **Risk Index** is computed as the **$L_1$-norm** (total persistence) of all $H_1$ features:
 
-```
-Risk Index = Σ |deathᵢ - birthᵢ|  for all H₁ bars
-```
+$$\text{Risk Index} = \sum_{i} |\text{death}_i - \text{birth}_i|$$
 
 A spike in this index indicates that the topological structure of the market is undergoing rapid change — a precursor to a crash.
 
@@ -65,8 +62,7 @@ TDA/
     ├── js/
     │   └── app.js        # Frontend application logic
     └── images/
-        ├── logo.png          # Application logo
-        └── logo-withoutbg.png # Transparent logo variant
+
 ```
 
 ---
@@ -78,6 +74,9 @@ TDA/
 - **Python 3.10+**
 - **pip** (Python package manager)
 
+> [!NOTE]
+> **TDA Engine Compatibility:** While the core application supports Python up to 3.13, the premium **Giotto-TDA** engine currently requires a stable Python environment (3.10 or 3.11). If you are using a newer version like Python 3.13, the pipeline will automatically and gracefully fall back to the **Ripser** engine to ensure uninterrupted analysis.
+
 ### Installation
 
 ```bash
@@ -88,9 +87,6 @@ cd TDA-Market-Risk-Analyzer
 # 2. Install dependencies (includes Ripser engine by default)
 pip install -r requirements.txt
 
-# 3. (Optional) Install Giotto-TDA for extreme production accuracy 
-# Note: May require C++ build tools on Windows
-pip install giotto-tda
 ```
 
 ### Running
@@ -101,6 +97,10 @@ uvicorn main:app --reload --port 8000
 ```
 
 Then open [http://localhost:8000](http://localhost:8000) in your browser.
+
+---
+![Home Page](static/images/home_page.png)
+![Analyse Page](static/images/analysis_page.png)
 
 ---
 
@@ -157,54 +157,6 @@ Upload a CSV file with the following columns:
 - **🎨 Premium Dark UI** — True black design with neon accents and glassmorphism
 - **📱 Responsive Layout** — Full mobile and tablet support
 - **🔧 Parameter Help System** — In-app documentation with trade-off guidance
-
----
-
-## API Reference
-
-### `GET /api/health`
-
-Health check endpoint. Returns the active TDA backend.
-
-```json
-{
-  "status": "ok",
-  "tda_backend": "giotto"
-}
-```
-
-### `POST /api/analyze`
-
-Run TDA analysis on uploaded CSV data.
-
-**Form Parameters:**
-
-- `file` — CSV file (multipart)
-- `window_size` — Rolling window size (int, default: 50)
-- `embedding_dim` — Takens embedding dimension (int, default: 3)
-- `time_delay` — Takens time delay (int, default: 1)
-
-**Response:**
-
-```json
-{
-  "ohlcv": [{ "time": "2024-01-15", "open": 100.0, "high": 102.0, "low": 99.0, "close": 101.0, "volume": 1000000 }],
-  "risk_index": [{ "time": "2024-03-01", "value": 0.4523 }],
-  "threshold": 1.2345,
-  "warning_zones": [{ "start": "2024-06-01", "end": "2024-06-15" }],
-  "tda_backend": "giotto",
-  "parameters": {
-    "window_size": 50,
-    "embedding_dim": 3,
-    "time_delay": 1,
-    "price_column": "Close"
-  }
-}
-```
-
-### `POST /api/generate-sample`
-
-Generate a synthetic stock dataset with a simulated crash for testing.
 
 ---
 
