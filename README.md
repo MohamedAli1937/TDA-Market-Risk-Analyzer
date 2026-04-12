@@ -86,13 +86,12 @@ TDA/
 git clone https://github.com/MohamedAli1937/TDA-Market-Risk-Analyzer.git
 cd TDA-Market-Risk-Analyzer
 
-# 2. Install dependencies
+# 2. Install dependencies (includes Ripser engine by default)
 pip install -r requirements.txt
 
-# 3. (Optional) Install a TDA engine for production accuracy
-pip install giotto-tda        # Recommended: full-featured
-# OR
-pip install ripser             # Lightweight alternative
+# 3. (Optional) Install Giotto-TDA for extreme production accuracy 
+# Note: May require C++ build tools on Windows
+pip install giotto-tda
 ```
 
 ### Running
