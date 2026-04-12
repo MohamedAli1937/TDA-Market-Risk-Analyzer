@@ -17,8 +17,7 @@ Traditional risk indicators (RSI, Bollinger Bands, VaR) rely on **statistical as
 ---
 
 ## How It Works — The TDA Pipeline
-
-The analysis follows a rigorous 3-stage mathematical pipeline:
+![TDA Market Risk Pipeline](static/images/pipeline-diagram.png)
 
 ### Stage 1: Takens Time-Delay Embedding
 
