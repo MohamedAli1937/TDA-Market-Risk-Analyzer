@@ -1,3 +1,5 @@
+let syncingCrosshair = false;
+
 const state = {
   selectedFile: null,
   results: null,
@@ -496,6 +498,8 @@ function syncCharts() {
   if (!state.priceChart || !state.riskChart) return;
 
   state.priceChart.timeScale().subscribeVisibleLogicalRangeChange((range) => {
+    if (syncingCrosshair) return;
+    syncingCrosshair = true;
     try {
       if (range && state.riskChart) {
         state.riskChart.timeScale().setVisibleLogicalRange(range);
@@ -503,9 +507,12 @@ function syncCharts() {
     } catch (e) {
       console.warn("sync range (price→risk)", e);
     }
+    syncingCrosshair = false;
   });
 
   state.riskChart.timeScale().subscribeVisibleLogicalRangeChange((range) => {
+    if (syncingCrosshair) return;
+    syncingCrosshair = true;
     try {
       if (range && state.priceChart) {
         state.priceChart.timeScale().setVisibleLogicalRange(range);
@@ -513,6 +520,7 @@ function syncCharts() {
     } catch (e) {
       console.warn("sync range (risk→price)", e);
     }
+    syncingCrosshair = false;
   });
 
   state.priceChart.subscribeCrosshairMove((param) => {
@@ -540,6 +548,15 @@ function syncCharts() {
     } catch (e) {}
     syncingCrosshair = false;
   });
+
+  try {
+    const priceRange = state.priceChart.timeScale().getVisibleLogicalRange();
+    if (priceRange) {
+      state.riskChart.timeScale().setVisibleLogicalRange(priceRange);
+    }
+  } catch (e) {
+    console.warn("initial range sync", e);
+  }
 }
 
 function renderWarningInfo(data) {
