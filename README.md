@@ -1,11 +1,6 @@
-<h1 align="center">
-  <img src="static/images/logo-withoutbg.png" width="45" style="vertical-align: middle; margin-right: 10px;" alt="TDA Logo">
-  TDA Market Risk Analyzer
-</h1>
+# <img src="static/images/logo-withoutbg.png" width="45" style="vertical-align: middle; margin-right: 10px;" alt="TDA Logo"> Topological Data Analysis for Financial Crash Prediction
 
-**Topological Data Analysis for Financial Crash Prediction**
-
-A premium, real-time financial risk detection system that moves beyond traditional statistical indicators by applying the advanced mathematics of **Topological Data Analysis (TDA)**. Specifically utilizing **Persistent Homology**, this engine treats market data as a **multi-dimensional** geometric shape. By continuously monitoring the **"shape"** of the market, it detects hidden structural tearing and topological anomalies—providing an institutional-grade early warning system that identifies critical market instability days before catastrophic crashes occur.
+An institutional-grade risk engine utilizing **Topological Data Analysis (TDA)** to detect structural market instability. By treating financial data as a multi-dimensional geometric shape, it identifies early-warning anomalies days before a crash occurs.
 
 ---
 
