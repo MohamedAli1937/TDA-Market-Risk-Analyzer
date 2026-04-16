@@ -14,7 +14,6 @@ import numpy as np
 import pandas as pd
 from typing import Dict, List, Tuple, Any
 
-# Try giotto-tda first; fall back to ripser/persim
 TDA_BACKEND = None
 
 try:
@@ -32,7 +31,6 @@ if TDA_BACKEND is None:
         pass
 
 
-# Takens' time-delay embedding
 def takens_embedding(series: np.ndarray, dimension: int = 3, delay: int = 1) -> np.ndarray:
     """
     Apply Takens' time-delay embedding to a 1-D time series.
@@ -65,7 +63,6 @@ def takens_embedding(series: np.ndarray, dimension: int = 3, delay: int = 1) -> 
     return series[indices]
 
 
-# Persistent homology
 def compute_persistence_giotto(point_cloud: np.ndarray, max_dim: int = 1) -> np.ndarray:
     """Compute persistence diagrams using giotto-tda."""
     vr = VietorisRipsPersistence(
@@ -170,7 +167,6 @@ def _compute_persistence_fallback(point_cloud: np.ndarray, max_dim: int = 1) -> 
     return np.array(rows)
 
 
-# Risk index
 def compute_risk_index(diagram: np.ndarray, homology_dim: int = 1) -> float:
     """
     Compute the Risk Index from a persistence diagram.
@@ -197,12 +193,10 @@ def compute_risk_index(diagram: np.ndarray, homology_dim: int = 1) -> float:
     if len(h1_bars) == 0:
         return 0.0
     lifetimes = np.abs(h1_bars[:, 1] - h1_bars[:, 0])
-    # Filter out infinite lifetimes
     lifetimes = lifetimes[np.isfinite(lifetimes)]
     return float(np.sum(lifetimes))
 
 
-# Full pipeline 
 def run_pipeline(
     df: pd.DataFrame,
     window_size: int = 50,
@@ -255,7 +249,6 @@ def run_pipeline(
     for col in ["Open", "High", "Low", "Close", "Volume"]:
         df[col] = pd.to_numeric(df[col], errors="coerce")
     df = df.dropna(subset=["Open", "High", "Low", "Close", "Volume"])
-    # Duplicate calendar rows break Lightweight Charts (unique ascending time required).
     df = df.drop_duplicates(subset=["Date"], keep="last").reset_index(drop=True)
 
     if len(df) < window_size:
@@ -280,8 +273,6 @@ def run_pipeline(
     risk_values = []
     risk_dates = []
 
-    # Pad the first (window_size - 1) dates with 0 so the risk chart
-    # starts at the same date as the price chart.
     for i in range(window_size - 1):
         risk_values.append(0.0)
         risk_dates.append(dates[i])
@@ -306,7 +297,6 @@ def run_pipeline(
         risk_values.append(risk)
         risk_dates.append(dates[i - 1])
 
-    # Compute threshold only from real values (skip the padded warm-up zeros)
     real_risk = np.array(risk_values[window_size - 1:])
 
     if len(real_risk) > 0 and np.std(real_risk) > 0:

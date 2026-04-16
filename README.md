@@ -1,4 +1,7 @@
-# 💲 TDA Market Risk Analyzer
+<h1 align="center">
+  <img src="static/images/logo-withoutbg.png" width="45" style="vertical-align: middle; margin-right: 10px;" alt="TDA Logo">
+  TDA Market Risk Analyzer
+</h1>
 
 **Topological Data Analysis for Financial Crash Prediction**
 
@@ -17,6 +20,7 @@ Traditional risk indicators (RSI, Bollinger Bands, VaR) rely on **statistical as
 ---
 
 ## How It Works — The TDA Pipeline
+
 ![TDA Market Risk Pipeline](static/images/pipeline-diagram.png)
 
 ### 1️⃣ Stage 1: Takens Time-Delay Embedding
@@ -99,6 +103,7 @@ uvicorn main:app --reload --port 8000
 Then open [http://localhost:8000](http://localhost:8000) in your browser.
 
 ---
+
 ![Home Page](static/images/home_page.png)
 ![Analyse Page](static/images/analysis_page.png)
 
@@ -192,6 +197,10 @@ Contributions are welcome! Key areas for improvement:
 - Persistence diagram visualization
 - Real-time data feeds (WebSocket integration)
 - Backtesting framework with historical crash data
+
+## ⚠️ Important Disclaimer
+
+This tool utilizes **Topological Data Analysis (TDA)** to detect structural shifts in market data. It is not a 100% predictive indicator and should never be used as a standalone financial advisor. We assume no responsibility for financial decisions or market outcomes.
 
 ---
 

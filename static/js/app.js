@@ -1,14 +1,3 @@
-/**
- * TDA Market Risk Analyzer — Application Logic
- *
- * Handles:
- *  - File upload with drag-and-drop
- *  - API communication with the FastAPI backend
- *  - Chart rendering using TradingView Lightweight Charts
- *  - Synchronized time range between price and risk charts
- *  - Warning zone highlighting
- */
-
 const state = {
   selectedFile: null,
   results: null,
@@ -22,16 +11,11 @@ const state = {
 const $ = (sel) => (sel.startsWith("#") ? document.getElementById(sel.slice(1)) : document.querySelector(sel));
 const $$ = (sel) => document.querySelectorAll(sel);
 
-/** Safe text update — avoids "Cannot set properties of null (setting 'textContent')". */
 function setTextById(id, value) {
   const el = document.getElementById(id);
   if (el) el.textContent = value;
 }
 
-/**
- * Lightweight Charts requires strictly increasing, unique `time` values.
- * Duplicate or invalid rows cause internal null errors (e.g. textContent on missing nodes).
- */
 function sanitizeCandles(rows) {
   if (!Array.isArray(rows)) return [];
   const cleaned = rows
@@ -164,7 +148,7 @@ function setupSampleButton() {
     } finally {
       sampleBtn.disabled = false;
       sampleBtn.innerHTML = `
-                <svg viewBox="0 0 24 24"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"/></svg>
+                <span class="btn-icon">+</span>
                 Use Sample Data
             `;
     }
@@ -240,15 +224,12 @@ async function renderDashboard(data) {
   renderStats(data);
   renderWarningInfo(data);
 
-  // Set asset name from selected file (prominent hero display)
   const nameEl = $("#data-name-display");
   if (nameEl && state.selectedFile) {
-    // Show clean name: strip .csv extension for prominence
     const rawName = state.selectedFile.name;
     nameEl.textContent = rawName;
   }
 
-  // Set TDA Engine badge
   const engineNameEl = $("#tda-engine-name");
   if (engineNameEl && data.tda_backend) {
     const engineLabels = {
@@ -259,15 +240,15 @@ async function renderDashboard(data) {
     engineNameEl.textContent = engineLabels[data.tda_backend] || data.tda_backend;
   }
 
-  // Set pipeline parameters display
   const pipelineEmbEl = $("#pipeline-embedding");
-  if (pipelineEmbEl && data.parameters) {
-    pipelineEmbEl.textContent = `Takens d=${data.parameters.embedding_dim}, τ=${data.parameters.time_delay}`;
+  if (pipelineEmbEl) {
+    const dIn = $("#param-dim");
+    const tIn = $("#param-delay");
+    const dim = (data.parameters && data.parameters.embedding_dim) || (dIn ? dIn.value : 3);
+    const delay = (data.parameters && data.parameters.time_delay) || (tIn ? tIn.value : 1);
+    pipelineEmbEl.textContent = `d=${dim}, τ=${delay}`;
   }
 
-  // Dashboard was `display:none` until now — layout may not run until the next frame.
-  // If charts are created with 0×0 size, Lightweight Charts can throw internally
-  // (often surfacing as "Cannot set properties of null (setting 'textContent')").
   await new Promise((resolve, reject) => {
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
@@ -337,16 +318,16 @@ function renderPriceChart(data) {
     crosshair: {
       mode: LightweightCharts.CrosshairMode.Normal,
       vertLine: {
-        color: 'rgba(0, 255, 202, 0.3)',
+        color: "rgba(0, 255, 202, 0.3)",
         width: 1,
         style: LightweightCharts.LineStyle.Dashed,
-        labelBackgroundColor: '#094026',
+        labelBackgroundColor: "#094026",
       },
       horzLine: {
-        color: 'rgba(0, 255, 202, 0.3)',
+        color: "rgba(0, 255, 202, 0.3)",
         width: 1,
         style: LightweightCharts.LineStyle.Dashed,
-        labelBackgroundColor: '#094026',
+        labelBackgroundColor: "#094026",
       },
     },
     rightPriceScale: {
@@ -438,16 +419,16 @@ function renderRiskChart(data) {
     crosshair: {
       mode: LightweightCharts.CrosshairMode.Normal,
       vertLine: {
-        color: 'rgba(0, 255, 202, 0.3)',
+        color: "rgba(0, 255, 202, 0.3)",
         width: 1,
         style: LightweightCharts.LineStyle.Dashed,
-        labelBackgroundColor: '#094026',
+        labelBackgroundColor: "#094026",
       },
       horzLine: {
-        color: 'rgba(0, 255, 202, 0.3)',
+        color: "rgba(0, 255, 202, 0.3)",
         width: 1,
         style: LightweightCharts.LineStyle.Dashed,
-        labelBackgroundColor: '#094026',
+        labelBackgroundColor: "#094026",
       },
     },
     rightPriceScale: {
@@ -514,9 +495,6 @@ function renderRiskChart(data) {
 function syncCharts() {
   if (!state.priceChart || !state.riskChart) return;
 
-  let syncingCrosshair = false; // Guard to prevent infinite feedback loop
-
-  // --- Sync visible range (zoom/pan) ---
   state.priceChart.timeScale().subscribeVisibleLogicalRangeChange((range) => {
     try {
       if (range && state.riskChart) {
@@ -537,7 +515,6 @@ function syncCharts() {
     }
   });
 
-  // --- Sync crosshair position ---
   state.priceChart.subscribeCrosshairMove((param) => {
     if (syncingCrosshair) return;
     syncingCrosshair = true;
@@ -547,7 +524,7 @@ function syncCharts() {
       } else {
         state.riskChart.setCrosshairPosition(undefined, param.time, state.riskSeries);
       }
-    } catch (e) { /* ignore */ }
+    } catch (e) {}
     syncingCrosshair = false;
   });
 
@@ -560,7 +537,7 @@ function syncCharts() {
       } else {
         state.priceChart.setCrosshairPosition(undefined, param.time, state.priceSeries);
       }
-    } catch (e) { /* ignore */ }
+    } catch (e) {}
     syncingCrosshair = false;
   });
 }
@@ -620,13 +597,17 @@ function renderWarningInfo(data) {
   infoEl.innerHTML = `
     <div class="warning-header-row">
       <div class="warning-icon-box">
-        <svg viewBox="0 0 24 24"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"></polygon>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
       </div>
       <div class="warning-summary">
         <span class="warning-status">
-          <span class="warning-count">${zones.length}</span> Instability Zone${zones.length > 1 ? 's' : ''} Detected
+          <span class="warning-count">${zones.length}</span> Instability Zone${zones.length > 1 ? "s" : ""} Detected
         </span>
-        <span class="warning-desc">Threshold: <strong>${data.threshold.toFixed(4)}</strong></span>
+        <span class="warning-desc">Topological instability detected: Circular structures in the point cloud indicate a shift in market shape above <strong>${data.threshold.toFixed(4)}</strong>.</span>
       </div>
     </div>
     <div class="warning-zones-inline">
@@ -701,7 +682,7 @@ function showToast(message, type = "info") {
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
-/** Help Documentation Data */
+
 const helpData = {
   window: {
     title: "Window Size",
@@ -782,7 +763,7 @@ function setupHelpDocumentation() {
       content.innerHTML = data.content;
       card.classList.remove("hidden");
       if (backdrop) backdrop.classList.remove("hidden");
-      document.body.style.overflow = "hidden"; // Prevent scroll when open
+      document.body.style.overflow = "hidden";
     }
   };
 
@@ -803,7 +784,6 @@ function setupHelpDocumentation() {
   if (closeBtn) closeBtn.addEventListener("click", hideHelp);
   if (backdrop) backdrop.addEventListener("click", hideHelp);
 
-  // Escape key to close
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") hideHelp();
   });

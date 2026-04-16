@@ -8,41 +8,26 @@
       content="TDA Market Risk Analyzer — Topological Data Analysis for financial crash prediction using persistent homology and time-delay embedding."
     />
     <title>TDA Market Risk Analyzer — Topological Crash Detection</title>
-
-    <!-- Styles -->
     <link rel="stylesheet" href="/static/css/style.css" />
-
-    <!-- Lightweight Charts (TradingView) -->
     <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
-
-    <!-- Favicon (inline SVG as data URI) -->
     <link rel="icon" href="/static/images/logo-withoutbg.png" type="image/png" />
   </head>
   <body>
-    <!-- ========== HEADER ========== -->
     <header class="app-header">
       <div class="app-logo">
         <img
-          src="/static/images/logo.png"
+          src="/static/images/logo-withoutbg.png"
           alt="TDA Logo"
           class="logo-image"
-          style="
-            width: 56px;
-            height: 56px;
-            border-radius: 12px;
-            object-fit: cover;
-            box-shadow: 0 4px 12px rgba(0, 255, 100, 0.2);
-          "
+          style="width: 40px; height: 40px; object-fit: contain"
         />
         <div class="logo-text">
-          <h1>TDA Risk Analyzer</h1>
-          <span class="subtitle">Persistent Homology · Market Topology</span>
+          <h1>TDA Market Risk Analyzer</h1>
         </div>
       </div>
     </header>
 
     <div class="app-container">
-      <!-- ========== UPLOAD SECTION ========== -->
       <section id="upload-section" class="upload-section">
         <h2 class="section-title">Analyze Market Topology</h2>
         <p class="section-desc">
@@ -50,7 +35,6 @@
           persistent homology.
         </p>
 
-        <!-- Drop Zone -->
         <div id="drop-zone" class="drop-zone">
           <div class="drop-zone-icon">
             <svg viewBox="0 0 24 24">
@@ -64,63 +48,40 @@
         </div>
         <input type="file" id="file-input" class="file-input" accept=".csv" />
 
-        <!-- File Selected Indicator -->
         <div id="file-selected" class="file-selected">
           <svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
           <span id="file-name">file.csv</span>
         </div>
 
-        <!-- Sample Data Button -->
         <button id="sample-btn" class="sample-btn">
-          <svg viewBox="0 0 24 24">
-            <path
-              d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"
-            />
-          </svg>
+          <span class="btn-icon">+</span>
           Use Sample Data
         </button>
 
-        <!-- Parameters -->
         <div class="params-row">
           <div class="param-group">
             <div class="param-header">
               <label for="param-window">Window Size</label>
-              <button class="help-trigger" data-help="window" title="How to choose window size?">
-                <svg viewBox="0 0 24 24">
-                  <circle cx="12" cy="12" r="10" />
-                  <path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3M12 17h.01" />
-                </svg>
-              </button>
+              <button class="help-trigger" data-help="window" title="How to choose window size?">?</button>
             </div>
             <input type="number" id="param-window" value="50" min="20" max="500" step="5" />
           </div>
           <div class="param-group">
             <div class="param-header">
               <label for="param-dim">Embedding Dim</label>
-              <button class="help-trigger" data-help="dim" title="How to choose dimension?">
-                <svg viewBox="0 0 24 24">
-                  <circle cx="12" cy="12" r="10" />
-                  <path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3M12 17h.01" />
-                </svg>
-              </button>
+              <button class="help-trigger" data-help="dim" title="How to choose dimension?">?</button>
             </div>
             <input type="number" id="param-dim" value="3" min="2" max="10" step="1" />
           </div>
           <div class="param-group">
             <div class="param-header">
               <label for="param-delay">Time Delay</label>
-              <button class="help-trigger" data-help="delay" title="How to choose time delay?">
-                <svg viewBox="0 0 24 24">
-                  <circle cx="12" cy="12" r="10" />
-                  <path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3M12 17h.01" />
-                </svg>
-              </button>
+              <button class="help-trigger" data-help="delay" title="How to choose time delay?">?</button>
             </div>
             <input type="number" id="param-delay" value="1" min="1" max="10" step="1" />
           </div>
         </div>
 
-        <!-- Analyze Button -->
         <button id="analyze-btn" class="btn-primary" disabled>
           <svg viewBox="0 0 24 24">
             <path d="M13 10V3L4 14h7v7l9-11h-7z" />
@@ -129,100 +90,43 @@
         </button>
       </section>
 
-      <!-- ========== RESULTS DASHBOARD ========== -->
       <section id="dashboard" class="dashboard">
-        <!-- Dataset Hero Banner -->
-        <div class="dataset-hero">
-          <div class="dataset-hero-content">
-            <div class="dataset-hero-icon">
-              <svg viewBox="0 0 24 24">
-                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
-                <polyline points="14 2 14 8 20 8" />
-                <line x1="16" y1="13" x2="8" y2="13" />
-                <line x1="16" y1="17" x2="8" y2="17" />
-                <polyline points="10 9 9 9 8 9" />
-              </svg>
-            </div>
-            <div class="dataset-hero-info">
-              <span class="dataset-hero-label">Dataset Under Analysis</span>
-              <h2 id="data-name-display" class="dataset-hero-name">No asset loaded</h2>
+        <div class="dataset-bar">
+          <div class="dataset-bar-left">
+            <h2 id="data-name-display" class="dataset-bar-name">No asset loaded</h2>
+            <div class="dataset-bar-params">
+              <span id="tda-engine-badge" class="param-badge"><span id="tda-engine-name">—</span></span>
+              <span id="pipeline-embedding" class="param-badge">d=3, τ=1</span>
             </div>
           </div>
-          <div class="dataset-hero-meta">
-            <!-- TDA Engine Badge -->
-            <div id="tda-engine-badge" class="engine-badge">
-              <div class="engine-badge-dot"></div>
-              <span class="engine-badge-label">TDA Engine</span>
-              <span id="tda-engine-name" class="engine-badge-value">—</span>
-            </div>
-            <button id="new-analysis-btn" class="new-analysis-btn">
-              <svg viewBox="0 0 24 24">
-                <polyline points="1 4 1 10 7 10" />
-                <path d="M3.51 15a9 9 0 102.13-9.36L1 10" />
-              </svg>
-              New Analysis
-            </button>
-          </div>
+          <button id="new-analysis-btn" class="new-analysis-btn">
+            <svg viewBox="0 0 24 24">
+              <polyline points="1 4 1 10 7 10" />
+              <path d="M3.51 15a9 9 0 102.13-9.36L1 10" />
+            </svg>
+            New
+          </button>
         </div>
 
-        <!-- Stats Row -->
         <div class="stats-row">
-          <div class="stat-card glass-card cyan">
+          <div class="stat-card">
             <div class="stat-label">Data Points</div>
-            <div class="stat-value cyan" id="stat-data-points">—</div>
-            <div class="stat-sub">OHLCV records</div>
+            <div class="stat-value blue" id="stat-data-points">—</div>
           </div>
-          <div class="stat-card glass-card green">
+          <div class="stat-card">
             <div class="stat-label">Price Change</div>
             <div class="stat-value green" id="stat-price-change">—</div>
-            <div class="stat-sub">Start → End</div>
           </div>
-          <div class="stat-card glass-card magenta">
-            <div class="stat-label">Peak Risk Index</div>
+          <div class="stat-card">
+            <div class="stat-label">Peak Risk</div>
             <div class="stat-value magenta" id="stat-max-risk">—</div>
-            <div class="stat-sub">H₁ persistence L₁ norm</div>
           </div>
-          <div class="stat-card glass-card amber">
-            <div class="stat-label">Warning Zones</div>
+          <div class="stat-card">
+            <div class="stat-label">Warnings Zones</div>
             <div class="stat-value amber" id="stat-warnings">—</div>
-            <div class="stat-sub">Above threshold (μ + 2σ)</div>
           </div>
         </div>
 
-        <!-- Pipeline Info Bar -->
-        <div class="pipeline-info-bar">
-          <div class="pipeline-step">
-            <div class="pipeline-step-icon">
-              <svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9"/></svg>
-            </div>
-            <div class="pipeline-step-info">
-              <span class="pipeline-step-label">Embedding</span>
-              <span id="pipeline-embedding" class="pipeline-step-value">Takens d=3, τ=1</span>
-            </div>
-          </div>
-          <div class="pipeline-divider"></div>
-          <div class="pipeline-step">
-            <div class="pipeline-step-icon">
-              <svg viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
-            </div>
-            <div class="pipeline-step-info">
-              <span class="pipeline-step-label">Homology</span>
-              <span class="pipeline-step-value">Vietoris-Rips (H₀, H₁)</span>
-            </div>
-          </div>
-          <div class="pipeline-divider"></div>
-          <div class="pipeline-step">
-            <div class="pipeline-step-icon">
-              <svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-            </div>
-            <div class="pipeline-step-info">
-              <span class="pipeline-step-label">Risk Index</span>
-              <span class="pipeline-step-value">L₁ Norm of H₁ Persistence</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Price Chart -->
         <div class="chart-section glass-card">
           <div class="chart-header">
             <div class="chart-title">
@@ -242,15 +146,19 @@
           <div id="price-chart" class="chart-container"></div>
         </div>
 
-        <!-- Risk Index Chart -->
         <div class="chart-section glass-card">
           <div class="chart-header">
             <div class="chart-title">
               <div class="icon risk">
-                <svg viewBox="0 0 24 24">
-                  <path
-                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                  />
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
                 </svg>
               </div>
               TDA Risk Index (H₁ Persistence)
@@ -264,14 +172,18 @@
           <div id="risk-chart" class="chart-container"></div>
         </div>
 
-        <!-- Warning Zone Details -->
-        <div id="warning-info" class="warning-info">
-          <!-- Populated by JS -->
-        </div>
+        <div id="warning-info" class="warning-info"></div>
       </section>
     </div>
 
-    <!-- ========== LOADING OVERLAY ========== -->
+    <footer class="app-footer">
+      <div class="footer-note">
+        <strong>Mathematical Notice:</strong> This tool utilizes Topogical Data Analysis (TDA) to detect structural
+        shifts in market data. It is not a 100% predictive indicator and should never be used as a standalone financial
+        advisor. We assume no responsibility for financial decisions or market outcomes.
+      </div>
+    </footer>
+
     <div id="loading-overlay" class="loading-overlay">
       <div class="loading-logo-container">
         <div class="loading-logo-empty"></div>
@@ -281,22 +193,17 @@
       <div id="loading-step" class="loading-step">Initializing...</div>
     </div>
 
-    <!-- ========== HELP MODAL ========== -->
     <div id="help-backdrop" class="help-backdrop hidden"></div>
     <div id="help-card" class="help-card hidden">
       <div class="help-card-header">
         <h3 id="help-title">Documentation</h3>
         <button id="close-help" class="close-help">&times;</button>
       </div>
-      <div id="help-content" class="help-card-body">
-        <!-- Content injected by JS -->
-      </div>
+      <div id="help-content" class="help-card-body"></div>
     </div>
 
-    <!-- ========== TOAST CONTAINER ========== -->
     <div id="toast-container" class="toast-container"></div>
 
-    <!-- App Script -->
     <script src="/static/js/app.js"></script>
   </body>
 </html>

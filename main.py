@@ -20,9 +20,6 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from tda_pipeline import run_pipeline
 
-# ---------------------------------------------------------------------------
-# App setup
-# ---------------------------------------------------------------------------
 app = FastAPI(
     title="TDA Market Risk Analyzer",
     description="Topological Data Analysis for financial crash prediction",
@@ -36,15 +33,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Serve static frontend assets
 STATIC_DIR = os.path.join(os.path.dirname(__file__), "static")
 if os.path.isdir(STATIC_DIR):
     app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
-
-# ---------------------------------------------------------------------------
-# API endpoints
-# ---------------------------------------------------------------------------
 
 @app.get("/api/health")
 async def health():
@@ -66,11 +58,9 @@ async def analyze(
     Expected CSV columns: Date, Open, High, Low, Close, Volume
     Returns JSON with ohlcv data, risk_index, threshold, and warning_zones.
     """
-    # --- Validate file type ---
     if not file.filename.lower().endswith(".csv"):
         raise HTTPException(status_code=400, detail="Only CSV files are supported.")
 
-    # --- Validate parameters ---
     if window_size < 20:
         raise HTTPException(status_code=400, detail="Window size must be at least 20.")
     if window_size > 500:
@@ -84,7 +74,6 @@ async def analyze(
     if time_delay > 10:
         raise HTTPException(status_code=400, detail="Time delay must be at most 10.")
 
-    # --- Read and parse CSV ---
     try:
         content = await file.read()
         text = content.decode("utf-8")
@@ -92,7 +81,6 @@ async def analyze(
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Failed to parse CSV: {str(e)}")
 
-    # --- Run TDA pipeline ---
     try:
         results = run_pipeline(
             df,
@@ -123,21 +111,16 @@ async def generate_sample():
 
     dates = pd.bdate_range(start="2022-01-03", periods=n_days)
 
-    # Simulate a stock with a crash around day 350
     price = 100.0
     prices = []
     for i in range(n_days):
         if i < 300:
-            # Normal bull market with mild volatility
             ret = np.random.normal(0.0005, 0.012)
         elif i < 330:
-            # Increasing instability
             ret = np.random.normal(0.0002, 0.025)
         elif i < 370:
-            # Crash period
             ret = np.random.normal(-0.008, 0.035)
         else:
-            # Recovery
             ret = np.random.normal(0.001, 0.015)
         price *= (1 + ret)
         prices.append(price)
@@ -161,10 +144,6 @@ async def generate_sample():
     csv_text = df.to_csv(index=False)
     return JSONResponse(content={"csv": csv_text, "filename": "sample_stock_data.csv"})
 
-
-# ---------------------------------------------------------------------------
-# Catch-all: serve frontend index.html
-# ---------------------------------------------------------------------------
 
 @app.get("/{rest_of_path:path}")
 async def serve_frontend(rest_of_path: str):
