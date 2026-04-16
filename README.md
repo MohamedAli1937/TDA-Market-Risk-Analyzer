@@ -1,4 +1,4 @@
-# <img src="static/images/logo-withoutbg.png" width="45" style="vertical-align: middle; margin-right: 10px;" alt="TDA Logo"> Topological Data Analysis for Financial Crash Prediction
+# 💲**Topological Data Analysis for Financial Crash Prediction**
 
 An institutional-grade risk engine utilizing **Topological Data Analysis (TDA)** to detect structural market instability. By treating financial data as a multi-dimensional geometric shape, it identifies early-warning anomalies days before a crash occurs.
 
